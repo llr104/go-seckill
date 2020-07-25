@@ -1,26 +1,28 @@
 package main
 
 import (
-	"go-seckill/dbutil"
+	"github.com/gin-gonic/gin"
+	"go-seckill/utils"
 	"net/http"
 	"strconv"
 )
-import "github.com/gin-gonic/gin"
-import _ "go-seckill/dbutil"
+
 
 func main()  {
 
+	utils.Init()
+
 	r := gin.Default()
 	r.Handle(http.MethodGet,"/products", func(context *gin.Context) {
-		m := make(map[int]dbutil.Product)
-		dbutil.ProductMap.Range(func(key, value interface{}) bool {
+		m := make(map[int]utils.Product)
+		utils.ProductMap.Range(func(key, value interface{}) bool {
 			k := key.(int)
-			m[k] = value.(dbutil.Product)
+			m[k] = value.(utils.Product)
 			return true
 		})
 
-		rsp := dbutil.Rsp{
-			Status: 0,
+		rsp := utils.Rsp{
+			Status: utils.CodeOK,
 			Data: m,
 		}
 		context.JSON(http.StatusOK, rsp)
@@ -30,24 +32,24 @@ func main()  {
 		param := context.Param("id")
 		id, err := strconv.Atoi(param)
 
-		rsp := dbutil.Rsp{
-			Status: 0,
+		rsp := utils.Rsp{
+			Status: utils.CodeOK,
 			Data: "",
 		}
 
 		if err == nil{
-			v, ok := dbutil.ProductMap.Load(id)
+			v, ok := utils.ProductMap.Load(id)
 			if ok{
-				p := v.(dbutil.Product)
+				p := v.(utils.Product)
 				rsp.Data = p
-				rsp.Status = 0
+				rsp.Status = utils.CodeOK
 			}else{
 				rsp.Data = ""
-				rsp.Status = 1
+				rsp.Status = utils.CodeError
 			}
 		}else{
 			rsp.Data = ""
-			rsp.Status = 1
+			rsp.Status = utils.CodeError
 		}
 		context.JSON(http.StatusOK, rsp)
 	})
@@ -56,34 +58,34 @@ func main()  {
 		param := context.Param("id")
 		id, err := strconv.Atoi(param)
 
-		rsp := dbutil.Rsp{
-			Status: 0,
+		rsp := utils.Rsp{
+			Status: utils.CodeOK,
 			Data: "",
 		}
 
 		if err == nil{
-			v, ok := dbutil.ProductMap.Load(id)
+			v, ok := utils.ProductMap.Load(id)
 			if ok{
-				p := v.(dbutil.Product)
+				p := v.(utils.Product)
 
 				if p.Count>0{
 					p.Count--
 					rsp.Data = p
-					rsp.Status = 0
+					rsp.Status = utils.CodeOK
 					p.IsUpdate = true
-					dbutil.ProductMap.Store(id, p)
+					utils.ProductMap.Store(id, p)
 				}else{
 					rsp.Data = ""
-					rsp.Status = 1
+					rsp.Status = utils.CodeError
 				}
 
 			}else{
 				rsp.Data = ""
-				rsp.Status = 1
+				rsp.Status = utils.CodeError
 			}
 		}else{
 			rsp.Data = ""
-			rsp.Status = 1
+			rsp.Status = utils.CodeError
 		}
 		context.JSON(http.StatusOK, rsp)
 

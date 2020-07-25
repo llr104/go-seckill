@@ -1,9 +1,10 @@
-package dbutil
+package utils
 
 import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	"os"
 	"sync"
 	"time"
 )
@@ -23,16 +24,24 @@ type Rsp struct {
 
 
 var ProductMap sync.Map
-var rwMutex sync.RWMutex
 
-func init() {
+
+func Init() {
 	db, err := gorm.Open("mysql", "root:123456abc@tcp(127.0.0.1:3306)/seckill?charset=utf8")
 
 	if err != nil{
 		fmt.Println(err)
+		os.Exit(1)
 	}else{
 		//fmt.Println(db)
 		if(db.HasTable(Product{})){
+			var products [] Product
+			db.Find(&products)
+			//重置数量，测试用
+			for _, v := range products{
+				v.Count = 100
+				db.Save(&v)
+			}
 
 		}else{
 			db = db.AutoMigrate(Product{})
@@ -46,7 +55,7 @@ func init() {
 
 	var products [] Product
 	db.Find(&products)
-	fmt.Printf("products len:%d", len(products))
+	fmt.Printf("products len:%d\n", len(products))
 
 	for _, v := range products{
 		ProductMap.Store(v.Id, v)
