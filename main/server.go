@@ -15,6 +15,8 @@ func Limiter(c *gin.Context) {
 		c.Next()
 	}else{
 		fmt.Println("限流了")
+		rsp := utils.Rsp{Status:utils.CodeError,Data:"限流了"}
+		c.JSON(200, rsp)
 		c.Abort()
 	}
 }

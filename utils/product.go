@@ -35,13 +35,16 @@ func Init() {
 	}else{
 		//fmt.Println(db)
 		if(db.HasTable(Product{})){
+
+			/*
+			//重置数量，测试用
 			var products [] Product
 			db.Find(&products)
-			//重置数量，测试用
 			for _, v := range products{
 				v.Count = 100
 				db.Save(&v)
 			}
+			*/
 
 		}else{
 			db = db.AutoMigrate(Product{})
