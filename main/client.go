@@ -15,13 +15,13 @@ var buyMap map[int]int
 func main() {
 	buyMap = make(map[int]int)
 
-	goNum := 100
+	goNum := 30
 	wg := sync.WaitGroup{}
 	wg.Add(goNum)
 
 	for i:=0; i<goNum; i++ {
 		go func() {
-			for j:=0; j<1; j++ {
+			for j:=0; j<100; j++ {
 				qryAndBuy()
 			}
 			wg.Done()

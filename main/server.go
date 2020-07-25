@@ -1,18 +1,30 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-seckill/utils"
+	"golang.org/x/time/rate"
 	"net/http"
 	"strconv"
 )
 
+var myLimiter = rate.NewLimiter(10, 30)
+func Limiter(c *gin.Context) {
+	if myLimiter.Allow(){
+		c.Next()
+	}else{
+		fmt.Println("限流了")
+		c.Abort()
+	}
+}
 
 func main()  {
 
 	utils.Init()
 
 	r := gin.Default()
+	r.Use(Limiter)
 	r.Handle(http.MethodGet,"/products", func(context *gin.Context) {
 		m := make(map[int]utils.Product)
 		utils.ProductMap.Range(func(key, value interface{}) bool {
