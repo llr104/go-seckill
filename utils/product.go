@@ -10,11 +10,11 @@ import (
 )
 
 type Product struct {
-	Id  int  		`json:"id" gorm:"primary_key"`
-	Name string 	`json:"name"`
-	Price float32 	`json:"price"`
-	Count int32 	`json:"count"`
-	IsUpdate bool   `json:"-" gorm:"-"`
+	Id       int     `json:"id" gorm:"primary_key"`
+	Name     string  `json:"name"`
+	Price    float32 `json:"price"`
+	Count    int32   `json:"count"`
+	IsUpdate bool    `json:"-" gorm:"-"`
 }
 
 type Rsp struct {
